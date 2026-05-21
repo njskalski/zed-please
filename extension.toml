@@ -8,7 +8,7 @@ repository = "https://github.com/njskalski/zed-please"
 
 [grammars.please]
 repository = "https://github.com/njskalski/zed-please"
-rev = "59879b8a0c9f9d27d069dae2ad9d3b8f3e24b917"
+rev = "bf68577185023365bc9f09b7c40dc5e9deec98f8"
 
 [language_servers.build-langserver]
 name = "Please Build Language Server"
