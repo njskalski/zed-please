@@ -1,0 +1,488 @@
+=====================================
+Simple build rule call
+=====================================
+
+filegroup(
+    name = "version",
+    srcs = ["VERSION"],
+)
+
+---
+
+(source_file
+  (expression_statement
+    (expression
+      (primary_expression
+        (call
+          function: (primary_expression
+            (identifier))
+          arguments: (argument_list
+            (argument
+              name: (identifier)
+              value: (expression
+                (primary_expression
+                  (string
+                    (string_start)
+                    (string_content)
+                    (string_end)))))
+            (argument
+              name: (identifier)
+              value: (expression
+                (primary_expression
+                  (list
+                    (expression
+                      (primary_expression
+                        (string
+                          (string_start)
+                          (string_content)
+                          (string_end))))))))))))))
+
+=====================================
+Boolean and None literals
+=====================================
+
+x = True
+y = False
+z = None
+
+---
+
+(source_file
+  (assignment
+    left: (pattern
+      (identifier))
+    right: (expression
+      (primary_expression
+        (true))))
+  (assignment
+    left: (pattern
+      (identifier))
+    right: (expression
+      (primary_expression
+        (false))))
+  (assignment
+    left: (pattern
+      (identifier))
+    right: (expression
+      (primary_expression
+        (none)))))
+
+=====================================
+Integer literals
+=====================================
+
+a = 42
+b = 0xFF
+c = 0o77
+d = 0b1010
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (integer))))
+  (assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (integer))))
+  (assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (integer))))
+  (assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (integer)))))
+
+=====================================
+List augmented assignment
+=====================================
+
+pages = []
+pages += ["foo.txt"]
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (list))))
+  (augmented_assignment
+    left: (pattern (identifier))
+    right: (expression
+      (primary_expression
+        (list
+          (expression
+            (primary_expression
+              (string (string_start) (string_content) (string_end)))))))))
+
+=====================================
+Function definition with type annotations
+=====================================
+
+def greet(name:str, count:int=1):
+    pass
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name)))
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name))
+        default: (expression (primary_expression (integer)))))
+    body: (block
+      (pass_statement))))
+
+=====================================
+Function definition with union type
+=====================================
+
+def genrule(name:str, cmd:str|list|dict, binary:bool=False):
+    pass
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name)))
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name) (type_name) (type_name)))
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name))
+        default: (expression (primary_expression (false)))))
+    body: (block (pass_statement))))
+
+=====================================
+Function with alias parameters
+=====================================
+
+def f(labels:list&features&tags=None):
+    pass
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name))
+        alias: (identifier)
+        alias: (identifier)
+        default: (expression (primary_expression (none)))))
+    body: (block (pass_statement))))
+
+=====================================
+Function with return type
+=====================================
+
+def double(x:int) -> int:
+    return x
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (parameter
+        name: (identifier)
+        type: (type_annotation (type_name))))
+    return_type: (type_annotation (type_name))
+    body: (block
+      (return_statement
+        (expression (primary_expression (identifier)))))))
+
+=====================================
+If statement
+=====================================
+
+if x == 1:
+    pass
+
+---
+
+(source_file
+  (if_statement
+    condition: (expression
+      (comparison_operator
+        (primary_expression (identifier))
+        (primary_expression (integer))))
+    consequence: (block (pass_statement))))
+
+=====================================
+If elif else
+=====================================
+
+if x == 1:
+    a = "one"
+elif x == 2:
+    a = "two"
+else:
+    a = "other"
+
+---
+
+(source_file
+  (if_statement
+    condition: (expression
+      (comparison_operator
+        (primary_expression (identifier))
+        (primary_expression (integer))))
+    consequence: (block
+      (assignment
+        left: (pattern (identifier))
+        right: (expression (primary_expression (string (string_start) (string_content) (string_end))))))
+    alternative: (elif_clause
+      condition: (expression
+        (comparison_operator
+          (primary_expression (identifier))
+          (primary_expression (integer))))
+      consequence: (block
+        (assignment
+          left: (pattern (identifier))
+          right: (expression (primary_expression (string (string_start) (string_content) (string_end)))))))
+    alternative: (else_clause
+      body: (block
+        (assignment
+          left: (pattern (identifier))
+          right: (expression (primary_expression (string (string_start) (string_content) (string_end)))))))))
+
+=====================================
+For loop
+=====================================
+
+for x in items:
+    pass
+
+---
+
+(source_file
+  (for_statement
+    left: (pattern (identifier))
+    right: (expression (primary_expression (identifier)))
+    body: (block (pass_statement))))
+
+=====================================
+Return statement
+=====================================
+
+def f():
+    return 1
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (return_statement
+        (expression (primary_expression (integer)))))))
+
+=====================================
+Assert statement
+=====================================
+
+assert x, "message"
+
+---
+
+(source_file
+  (assert_statement
+    (expression (primary_expression (identifier)))
+    (expression (primary_expression (string (string_start) (string_content) (string_end))))))
+
+=====================================
+Pass continue break
+=====================================
+
+def f():
+    pass
+
+for x in items:
+    break
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block (pass_statement)))
+  (for_statement
+    left: (pattern (identifier))
+    right: (expression (primary_expression (identifier)))
+    body: (block (break_statement))))
+
+=====================================
+Dict literal
+=====================================
+
+d = {"a": 1, "b": 2}
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression
+      (primary_expression
+        (dict
+          (dict_pair
+            key: (expression (primary_expression (string (string_start) (string_content) (string_end))))
+            value: (expression (primary_expression (integer))))
+          (dict_pair
+            key: (expression (primary_expression (string (string_start) (string_content) (string_end))))
+            value: (expression (primary_expression (integer)))))))))
+
+=====================================
+Attribute access
+=====================================
+
+CONFIG.OS
+
+---
+
+(source_file
+  (expression_statement
+    (expression
+      (primary_expression
+        (attribute
+          object: (primary_expression (identifier))
+          attribute: (identifier))))))
+
+=====================================
+List comprehension
+=====================================
+
+outs = [f(x) for x in srcs]
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression
+      (primary_expression
+        (list_comprehension
+          body: (expression
+            (primary_expression
+              (call
+                function: (primary_expression (identifier))
+                arguments: (argument_list
+                  (argument
+                    value: (expression (primary_expression (identifier))))))))
+          (for_in_clause
+            left: (pattern (identifier))
+            right: (expression (primary_expression (identifier)))))))))
+
+=====================================
+Conditional expression
+=====================================
+
+x = "a" if flag else "b"
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression
+      (conditional_expression
+        (expression (primary_expression (string (string_start) (string_content) (string_end))))
+        (expression (primary_expression (identifier)))
+        (expression (primary_expression (string (string_start) (string_content) (string_end))))))))
+
+=====================================
+Lambda expression
+=====================================
+
+f = lambda x: x
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression
+      (lambda
+        parameters: (lambda_parameters
+          (lambda_parameter
+            name: (identifier)))
+        body: (expression (primary_expression (identifier)))))))
+
+=====================================
+Subscript
+=====================================
+
+items[0]
+
+---
+
+(source_file
+  (expression_statement
+    (expression
+      (primary_expression
+        (subscript
+          value: (primary_expression (identifier))
+          subscript: (expression (primary_expression (integer))))))))
+
+=====================================
+Comment
+=====================================
+
+# comment
+x = 1
+
+---
+
+(source_file
+  (comment)
+  (assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (integer)))))
+
+=====================================
+F-string interpolation
+=====================================
+
+s = f"hello {name}"
+
+---
+
+(source_file
+  (assignment
+    left: (pattern (identifier))
+    right: (expression
+      (primary_expression
+        (string
+          (string_start)
+          (string_content)
+          (interpolation
+            expression: (identifier))
+          (string_end))))))
+
+=====================================
+Augmented assignment with binary op
+=====================================
+
+x += 1
+
+---
+
+(source_file
+  (augmented_assignment
+    left: (pattern (identifier))
+    right: (expression (primary_expression (integer)))))
