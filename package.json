@@ -1,0 +1,46 @@
+{
+  "name": "tree-sitter-please",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for the Please build system BUILD language",
+  "main": "bindings/node",
+  "keywords": [
+    "tree-sitter",
+    "please",
+    "build",
+    "parser"
+  ],
+  "license": "Apache-2.0",
+  "files": [
+    "grammar.js",
+    "binding.gyp",
+    "prebuilds/**",
+    "bindings/node/*",
+    "queries/*",
+    "src/**"
+  ],
+  "dependencies": {
+    "node-addon-api": "^7.1.0",
+    "node-gyp-build": "^4.8.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.26.0"
+  },
+  "scripts": {
+    "build": "tree-sitter generate && node-gyp build",
+    "test": "tree-sitter test",
+    "parse": "tree-sitter parse"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.please",
+      "file-types": [
+        "BUILD",
+        "BUILD.plz",
+        "build_defs",
+        "build_defs.plz"
+      ],
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm"
+    }
+  ]
+}

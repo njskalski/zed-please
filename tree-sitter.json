@@ -1,0 +1,18 @@
+{
+  "grammars": [
+    {
+      "name": "please",
+      "camelcase": "Please",
+      "scope": "source.please",
+      "path": ".",
+      "highlights": "queries/highlights.scm",
+      "file-types": ["BUILD", "BUILD.plz", "build_defs", "build_defs.plz"],
+      "injection-regex": "please"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "Apache-2.0",
+    "description": "Tree-sitter grammar for the Please build system BUILD language"
+  }
+}

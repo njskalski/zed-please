@@ -1,0 +1,15 @@
+id = "please-build"
+name = "Please Build"
+version = "0.2.1"
+schema_version = 1
+authors = ["nskalski"]
+description = "Syntax highlighting and LSP support for the Please build system"
+repository = "https://github.com/nskalski/zed-please"
+
+[grammars.please]
+repository = "file:///home/nskalski/zedplug/tree-sitter-please"
+rev = "0ad0078b1a535510c1b5ddffff6a6987025d81eb"
+
+[language_servers.build-langserver]
+name = "Please Build Language Server"
+languages = ["Please Build"]
