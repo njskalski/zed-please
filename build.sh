@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# build.sh — build both the tree-sitter grammar and the Zed extension
+# build.sh — build the tree-sitter grammar and the Zed extension
+#
+# Everything lives in one repo. The grammar (grammar.js, src/) is at the
+# repo root alongside the Zed extension files (extension.toml, Cargo.toml).
 #
 # Usage:
 #   ./build.sh           # build everything
@@ -9,12 +12,10 @@ set -euo pipefail
 #   ./build.sh extension # build Zed WASM extension only
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GRAMMAR_DIR="$SCRIPT_DIR/tree-sitter-please"
-EXTENSION_DIR="$SCRIPT_DIR/zed-please"
 
 build_grammar() {
     echo "==> Building tree-sitter grammar..."
-    cd "$GRAMMAR_DIR"
+    cd "$SCRIPT_DIR"
 
     if ! command -v tree-sitter &>/dev/null; then
         echo "ERROR: tree-sitter CLI not found. Install with:"
@@ -32,7 +33,7 @@ build_grammar() {
 
 build_extension() {
     echo "==> Building Zed extension (wasm32-wasip1)..."
-    cd "$EXTENSION_DIR"
+    cd "$SCRIPT_DIR"
 
     if ! command -v cargo &>/dev/null; then
         echo "ERROR: cargo not found. Install Rust via rustup: https://rustup.rs"
@@ -48,15 +49,14 @@ build_extension() {
     echo "    Extension built: target/wasm32-wasip1/release/zed_please.wasm"
 }
 
-commit_grammar() {
-    echo "==> Updating grammar git commit SHA in extension.toml..."
-    cd "$GRAMMAR_DIR"
+update_sha() {
+    echo "==> Updating grammar SHA in extension.toml..."
+    cd "$SCRIPT_DIR"
     SHA="$(git rev-parse HEAD 2>/dev/null || echo "")"
     if [ -z "$SHA" ]; then
-        echo "    WARNING: tree-sitter-please is not a git repo, skipping SHA update."
+        echo "    WARNING: not a git repo, skipping SHA update."
         return
     fi
-    cd "$EXTENSION_DIR"
     sed -i "s/^rev = \".*\"/rev = \"$SHA\"/" extension.toml
     echo "    Updated rev to $SHA"
 }
@@ -66,18 +66,19 @@ TARGET="${1:-all}"
 case "$TARGET" in
     grammar)
         build_grammar
-        commit_grammar
         ;;
     extension)
         build_extension
         ;;
     all)
         build_grammar
-        commit_grammar
         build_extension
         ;;
+    update-sha)
+        update_sha
+        ;;
     *)
-        echo "Usage: $0 [grammar|extension|all]"
+        echo "Usage: $0 [grammar|extension|all|update-sha]"
         exit 1
         ;;
 esac
