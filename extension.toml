@@ -2,12 +2,12 @@ id = "please-build"
 name = "Please Build"
 version = "0.2.1"
 schema_version = 1
-authors = ["nskalski"]
+authors = ["Andrzej J Skalski <gitstuff@s5i.ch>"]
 description = "Syntax highlighting and LSP support for the Please build system"
-repository = "https://github.com/nskalski/zed-please"
+repository = "https://github.com/njskalski/zed-please"
 
 [grammars.please]
-repository = "file:///home/nskalski/zedplug/zed-please"
+repository = "https://github.com/njskalski/zed-please"
 rev = "832bf31815fd150e7c6ee10b0a41957005f384fd"
 
 [language_servers.build-langserver]
